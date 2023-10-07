@@ -28,14 +28,15 @@ public class ClientService {
     private final RabbitMQProducer producer;
 
     public Map<String, List<Facture>> get() {
-        
-        var clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false).toList();
         Map<String, List<Facture>> stringListMap = new HashMap<>();
-        
-        for (var client : clients){
+
+        var iterator = clientRepository.findAll().iterator();
+
+        while (iterator.hasNext()) {
+            var client = iterator.next();
             var name = client.getNom();
             var facture = client.getFacture();
-            if (stringListMap.containsKey(name)){
+            if (stringListMap.containsKey(name)) {
                 var actualFactures = stringListMap.get(name);
                 actualFactures.add(facture);
                 stringListMap.replace(name, actualFactures);
@@ -45,7 +46,7 @@ public class ClientService {
                 stringListMap.put(name, facturesToSet);
             }
         }
-        
+
         return stringListMap;
     }
 
@@ -53,7 +54,7 @@ public class ClientService {
     public Client postFacture(Client client) {
         CompletableFuture<Void> sendMessage = CompletableFuture.runAsync(() -> producer.send(client));
         CompletableFuture<Void> saveInDB = CompletableFuture.runAsync(() -> clientRepository.save(client));
-        
+
         return CompletableFuture.allOf(sendMessage, saveInDB)
                 .thenApply(unused -> client)
                 .join();
