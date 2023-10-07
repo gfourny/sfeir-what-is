@@ -27,6 +27,7 @@ public class Client {
     private Long id;
     private String nom;
     private String adresse;
+    private String pays;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "facture_id", referencedColumnName = "id")
     private Facture facture;
