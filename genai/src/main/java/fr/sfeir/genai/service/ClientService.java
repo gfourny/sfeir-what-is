@@ -2,6 +2,7 @@ package fr.sfeir.genai.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -35,5 +36,19 @@ public class ClientService {
     @Transactional
     public Client postFacture(Client client){
         return clientRepository.save(client);
+    }
+
+    public Map<String, List<Facture>> getFacturesByClientsFilteredByAmount(int amount) {
+        List<Client> clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false)
+                .toList();
+
+        Predicate<Facture> moreThanAmount = facture -> facture.getMontantTotal() > amount;
+        Predicate<Facture> startWith = facture -> facture.getNumeroFacture().startsWith("12345");
+        Predicate<Facture> factureFiltered = moreThanAmount.and(startWith);
+
+        return clients.stream()
+                .collect(Collectors.groupingBy(Client::getNom,
+                        Collectors.mapping(Client::getFacture, Collectors.filtering(factureFiltered, Collectors.toList())))
+                );
     }
 }

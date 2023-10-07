@@ -29,7 +29,7 @@ public class InitClientDatabase {
                                     .facture(Facture.builder()
                                             .id(1L)
                                             .montantTotal(131.2)
-                                            .numeroFacture(UUID.randomUUID().toString())
+                                            .numeroFacture("12345-54461")
                                             .build())
                                     .build(),
                             Client.builder()
