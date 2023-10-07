@@ -1,5 +1,7 @@
 package fr.sfeir.genai.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -26,7 +28,25 @@ public class ClientService {
     private final RabbitMQProducer producer;
 
     public Map<String, List<Facture>> get() {
-        return null;
+        
+        var clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false).toList();
+        Map<String, List<Facture>> stringListMap = new HashMap<>();
+        
+        for (var client : clients){
+            var name = client.getNom();
+            var facture = client.getFacture();
+            if (stringListMap.containsKey(name)){
+                var actualFactures = stringListMap.get(name);
+                actualFactures.add(facture);
+                stringListMap.replace(name, actualFactures);
+            } else {
+                var facturesToSet = new ArrayList<Facture>();
+                facturesToSet.add(facture);
+                stringListMap.put(name, facturesToSet);
+            }
+        }
+        
+        return stringListMap;
     }
 
     @Transactional
