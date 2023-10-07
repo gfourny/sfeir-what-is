@@ -25,14 +25,8 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final RabbitMQProducer producer;
 
-    public Map<String, List<Facture>> getFacturesByClients() {
-        List<Client> clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false)
-                .toList();
-
-        return clients.stream()
-                .collect(Collectors.groupingBy(Client::getNom,
-                        Collectors.mapping(Client::getFacture, Collectors.toList()))
-                );
+    public Map<String, List<Facture>> get() {
+        return null;
     }
 
     @Transactional
@@ -45,7 +39,7 @@ public class ClientService {
                 .join();
     }
 
-    public Map<String, List<Facture>> getFacturesByClientsFilteredByAmount(int amount, String prefix) {
+    public Map<String, List<Facture>> getFiltered(int amount, String prefix) {
         List<Client> clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false)
                 .toList();
 

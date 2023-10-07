@@ -30,13 +30,13 @@ public class SfeirController {
 
     @GetMapping
     public ResponseEntity<Map<String, List<Facture>>> getFacturesByClients() {
-        return new ResponseEntity<>(clientService.getFacturesByClients(), HttpStatus.OK);
+        return new ResponseEntity<>(clientService.get(), HttpStatus.OK);
     }
     
     @GetMapping("/{amount}")
     public ResponseEntity<Map<String, List<Facture>>> getFacturesByClientFilteredByAmount(@PathVariable("amount") int amount,
             @RequestParam(required = false, name = "facturePrefix") String prefix){
-        return new ResponseEntity<>(clientService.getFacturesByClientsFilteredByAmount(amount, prefix), HttpStatus.OK);
+        return new ResponseEntity<>(clientService.getFiltered(amount, prefix), HttpStatus.OK);
     }
 
     @PostMapping
