@@ -6,9 +6,12 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.sfeir.genai.model.Client;
 import fr.sfeir.genai.model.Facture;
 import fr.sfeir.genai.service.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +31,8 @@ public class SfeirController {
         return new ResponseEntity<>(clientService.getFacturesByClients(), HttpStatus.OK);
     }
 
-    //    @PostMapping
-    //    public ResponseEntity<Client> postFacture(@RequestBody Client client){
-    //        
-    //    }
+    @PostMapping
+    public ResponseEntity<Client> postFacture(@RequestBody Client client) {
+        return new ResponseEntity<>(clientService.postFacture(client),HttpStatus.CREATED);
+    }
 }

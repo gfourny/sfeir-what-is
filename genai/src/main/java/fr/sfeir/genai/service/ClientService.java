@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import fr.sfeir.genai.model.Client;
 import fr.sfeir.genai.model.Facture;
 import fr.sfeir.genai.repository.ClientRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -29,5 +30,10 @@ public class ClientService {
                 .collect(Collectors.groupingBy(Client::getNom,
                         Collectors.mapping(Client::getFacture, Collectors.toList()))
                 );
+    }
+    
+    @Transactional
+    public Client postFacture(Client client){
+        return clientRepository.save(client);
     }
 }
