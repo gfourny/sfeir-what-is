@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.sfeir.genai.model.Client;
@@ -33,8 +34,9 @@ public class SfeirController {
     }
     
     @GetMapping("/{amount}")
-    public ResponseEntity<Map<String, List<Facture>>> getFacturesByClientFilteredByAmount(@PathVariable("amount") int amount){
-        return new ResponseEntity<>(clientService.getFacturesByClientsFilteredByAmount(amount), HttpStatus.OK);
+    public ResponseEntity<Map<String, List<Facture>>> getFacturesByClientFilteredByAmount(@PathVariable("amount") int amount,
+            @RequestParam(required = false, name = "facturePrefix") String prefix){
+        return new ResponseEntity<>(clientService.getFacturesByClientsFilteredByAmount(amount, prefix), HttpStatus.OK);
     }
 
     @PostMapping

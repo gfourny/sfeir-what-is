@@ -1,0 +1,16 @@
+services:
+  gfr-rabbitMQ:
+    image: rabbitmq:3.10.25-management
+    environment:
+      RABBITMQ_DEFAULT_USER: spring
+      RABBITMQ_DEFAULT_PASS: spring
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+      - '8080:8080'
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s

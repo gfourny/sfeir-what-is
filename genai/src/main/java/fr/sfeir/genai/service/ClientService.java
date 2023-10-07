@@ -2,6 +2,7 @@ package fr.sfeir.genai.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final RabbitMQProducer producer;
 
     public Map<String, List<Facture>> getFacturesByClients() {
         List<Client> clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false)
@@ -35,16 +37,21 @@ public class ClientService {
 
     @Transactional
     public Client postFacture(Client client) {
-        return clientRepository.save(client);
+        CompletableFuture<Void> sendMessage = CompletableFuture.runAsync(() -> producer.send(client));
+        CompletableFuture<Void> saveInDB = CompletableFuture.runAsync(() -> clientRepository.save(client));
+        
+        return CompletableFuture.allOf(sendMessage, saveInDB)
+                .thenApply(unused -> client)
+                .join();
     }
 
-    public Map<String, List<Facture>> getFacturesByClientsFilteredByAmount(int amount) {
+    public Map<String, List<Facture>> getFacturesByClientsFilteredByAmount(int amount, String prefix) {
         List<Client> clients = StreamSupport.stream(clientRepository.findAll().spliterator(), false)
                 .toList();
 
         return clients.stream()
                 .collect(Collectors.groupingBy(Client::getNom,
-                        Collectors.mapping(Client::getFacture, Collectors.filtering(FacturePredicate.filteredFacture(amount, "12345"), Collectors.toList())))
+                        Collectors.mapping(Client::getFacture, Collectors.filtering(FacturePredicate.filteredFacture(amount, prefix), Collectors.toList())))
                 );
     }
 }

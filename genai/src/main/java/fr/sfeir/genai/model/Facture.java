@@ -1,6 +1,8 @@
 package fr.sfeir.genai.model;
 
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Facture {
+public class Facture implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
